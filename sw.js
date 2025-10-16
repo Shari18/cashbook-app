@@ -1,13 +1,10 @@
-// ABOUTME: Service worker for PWA offline functionality and caching
-// ABOUTME: Enables the app to work without internet connection
-
-const CACHE_NAME = 'cashbook-v1';
+const CACHE_NAME = 'cashbook-v2';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/manifest.json'
+  '/cashbook-app/',
+  '/cashbook-app/index.html',
+  '/cashbook-app/styles.css',
+  '/cashbook-app/app.js',
+  '/cashbook-app/manifest.json'
 ];
 
 // Install event - cache resources
