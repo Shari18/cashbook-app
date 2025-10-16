@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashBook Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        form { margin: 20px 0; }
+        input, select { margin: 5px; padding: 8px; }
+        button { padding: 10px 20px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>CashBook Debug Test</h1>
+
+    <div id="debugOutput" class="debug">
+        <h3>Debug Output:</h3>
+        <div id="logs"></div>
+    </div>
+
+    <form id="testForm">
+        <h3>Test Form</h3>
+        <input type="number" id="amount" name="amount" placeholder="Amount" step="0.01" value="1000">
+        <select id="type" name="type">
+            <option value="">Select Type</option>
+            <option value="income" selected>Income</option>
+            <option value="expense">Expense</option>
+        </select>
+        <select id="category" name="category">
+            <option value="">Select Category</option>
+            <option value="Salary" selected>Salary</option>
+        </select>
+        <select id="paymentMode" name="paymentMode">
+            <option value="">Select Payment Mode</option>
+            <option value="upi" selected>UPI</option>
+        </select>
+        <input type="text" id="description" name="description" value="Test transaction">
+        <input type="date" id="date" name="date">
+        <button type="button" onclick="testFormData()">Test Form Data Capture</button>
+        <button type="button" onclick="testDirectAccess()">Test Direct Access</button>
+    </form>
+
+    <div id="transactions">
+        <h3>Test Transactions:</h3>
+        <div id="transactionList"></div>
+    </div>
+
+    <script>
+        // Set default date
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logs.appendChild(div);
+        }
+
+        function testFormData() {
+            log('=== Testing FormData Approach ===');
+
+            const form = document.getElementById('testForm');
+            const formData = new FormData(form);
+
+            log(`FormData entries count: ${Array.from(formData.entries()).length}`);
+
+            const testTransaction = {
+                amount: parseFloat(formData.get('amount')),
+                type: formData.get('type'),
+                category: formData.get('category'),
+                paymentMode: formData.get('paymentMode'),
+                description: formData.get('description'),
+                date: formData.get('date')
+            };
+
+            log(`Amount: ${testTransaction.amount} (type: ${typeof testTransaction.amount})`);
+            log(`Type: ${testTransaction.type}`);
+            log(`Category: ${testTransaction.category}`);
+            log(`Payment Mode: ${testTransaction.paymentMode}`);
+            log(`Description: ${testTransaction.description}`);
+            log(`Date: ${testTransaction.date}`);
+
+            if (isNaN(testTransaction.amount)) {
+                log('ERROR: Amount is NaN!', 'error');
+            } else {
+                log('SUCCESS: Amount is valid number', 'success');
+            }
+        }
+
+        function testDirectAccess() {
+            log('=== Testing Direct Access Approach ===');
+
+            const testTransaction = {
+                amount: parseFloat(document.getElementById('amount').value),
+                type: document.getElementById('type').value,
+                category: document.getElementById('category').value,
+                paymentMode: document.getElementById('paymentMode').value,
+                description: document.getElementById('description').value,
+                date: document.getElementById('date').value
+            };
+
+            log(`Amount: ${testTransaction.amount} (type: ${typeof testTransaction.amount})`);
+            log(`Type: ${testTransaction.type}`);
+            log(`Category: ${testTransaction.category}`);
+            log(`Payment Mode: ${testTransaction.paymentMode}`);
+            log(`Description: ${testTransaction.description}`);
+            log(`Date: ${testTransaction.date}`);
+
+            if (isNaN(testTransaction.amount)) {
+                log('ERROR: Amount is NaN!', 'error');
+            } else {
+                log('SUCCESS: Amount is valid number', 'success');
+                displayTransaction(testTransaction);
+            }
+        }
+
+        function displayTransaction(transaction) {
+            const list = document.getElementById('transactionList');
+            const div = document.createElement('div');
+            div.className = 'debug success';
+            div.innerHTML = `
+                <strong>Transaction Display Test:</strong><br>
+                Amount: ${formatCurrency(transaction.amount)}<br>
+                Type: ${transaction.type}<br>
+                Category: ${transaction.category}<br>
+                Payment Mode: ${transaction.paymentMode}<br>
+                Description: ${transaction.description}<br>
+                Date: ${formatDate(transaction.date)}
+            `;
+            list.appendChild(div);
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        log('Debug page loaded. Ready for testing!', 'success');
+    </script>
+</body>
+</html>
