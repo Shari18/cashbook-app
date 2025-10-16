@@ -5,7 +5,7 @@ A simple, offline-capable Progressive Web App (PWA) for tracking personal income
 ## 🚀 Quick Start - Deploy Your Own
 
 **Option 1: Use This Live Demo (Easiest)**
-🚀 **[Open Live App](https://shari18.github.io/cashbook-app)** ← Replace with your actual GitHub Pages URL
+🚀 **[Open Live App](https://shari18.github.io/cashbook-app)**
 
 1. Click the live app link above
 2. On iPhone: Open in Safari → Add to Home Screen
