@@ -1,4 +1,7 @@
-const CACHE_NAME = 'cashbook-v3';
+// ABOUTME: Service worker for PWA offline functionality and caching
+// ABOUTME: Enables the app to work without internet connection
+
+const CACHE_NAME = 'cashbook-v4';
 const urlsToCache = [
   '/cashbook-app/',
   '/cashbook-app/index.html',
