@@ -205,6 +205,12 @@ body {
     background: #e2e8f0;
 }
 
+.import-label {
+    display: block;
+    cursor: pointer;
+    text-align: center;
+}
+
 /* Transactions List */
 .transactions-list {
     margin-top: 1rem;
