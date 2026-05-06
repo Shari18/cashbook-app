@@ -55,9 +55,14 @@ class CashBook {
             this.renderTransactions();
         });
 
-        // Export and clear data
+        // Export, import, and clear data
         document.getElementById('exportBtn').addEventListener('click', () => {
             this.exportToCSV();
+        });
+
+        document.getElementById('importFile').addEventListener('change', (e) => {
+            this.importFromCSV(e.target.files[0]);
+            e.target.value = '';
         });
 
         document.getElementById('clearDataBtn').addEventListener('click', () => {
@@ -427,6 +432,83 @@ class CashBook {
         window.URL.revokeObjectURL(url);
 
         this.showMessage('Data exported successfully!', 'success');
+    }
+
+    importFromCSV(file) {
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const lines = e.target.result.split('\n').filter(line => line.trim());
+            if (lines.length < 2) {
+                this.showMessage('CSV file is empty or invalid', 'error');
+                return;
+            }
+
+            const header = lines[0].toLowerCase();
+            if (!header.includes('date') || !header.includes('type') || !header.includes('amount')) {
+                this.showMessage('Invalid CSV format. Expected: Date, Type, Category, Amount, Payment Mode, Description', 'error');
+                return;
+            }
+
+            const imported = [];
+            for (let i = 1; i < lines.length; i++) {
+                const parts = this.parseCSVLine(lines[i]);
+                if (parts.length < 4) continue;
+
+                imported.push({
+                    id: Date.now().toString() + i,
+                    date: parts[0],
+                    type: parts[1],
+                    category: parts[2] || '',
+                    amount: parseFloat(parts[3]),
+                    paymentMode: parts[4] || 'cash',
+                    description: parts[5] || '',
+                    timestamp: new Date().toISOString()
+                });
+            }
+
+            if (imported.length === 0) {
+                this.showMessage('No valid transactions found in CSV', 'error');
+                return;
+            }
+
+            const action = confirm(
+                `Found ${imported.length} transactions. Press OK to REPLACE all existing data, or Cancel to APPEND to existing data.`
+            );
+
+            if (action) {
+                this.transactions = imported;
+            } else {
+                this.transactions = this.transactions.concat(imported);
+            }
+
+            this.saveTransactions();
+            this.updateUI();
+            this.showMessage(`Imported ${imported.length} transactions successfully!`, 'success');
+        };
+
+        reader.readAsText(file);
+    }
+
+    parseCSVLine(line) {
+        const parts = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (ch === '"') {
+                inQuotes = !inQuotes;
+            } else if (ch === ',' && !inQuotes) {
+                parts.push(current.trim());
+                current = '';
+            } else {
+                current += ch;
+            }
+        }
+        parts.push(current.trim());
+        return parts;
     }
 
     clearAllData() {
