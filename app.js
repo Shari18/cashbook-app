@@ -55,6 +55,28 @@ class CashBook {
             this.renderTransactions();
         });
 
+        document.getElementById('dateRangeFilter').addEventListener('change', (e) => {
+            const customContainer = document.getElementById('dateRangeCustom');
+            if (e.target.value === 'custom') {
+                customContainer.classList.add('visible');
+                const today = new Date();
+                const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+                document.getElementById('dateTo').value = today.toISOString().split('T')[0];
+                document.getElementById('dateFrom').value = monthAgo.toISOString().split('T')[0];
+            } else {
+                customContainer.classList.remove('visible');
+            }
+            this.renderTransactions();
+        });
+
+        document.getElementById('dateFrom').addEventListener('change', () => {
+            this.renderTransactions();
+        });
+
+        document.getElementById('dateTo').addEventListener('change', () => {
+            this.renderTransactions();
+        });
+
         // Export, import, and clear data
         document.getElementById('exportBtn').addEventListener('click', () => {
             this.exportToCSV();
@@ -277,6 +299,39 @@ class CashBook {
             filteredTransactions = filteredTransactions.filter(t =>
                 t.description && t.description.toLowerCase().includes(descriptionFilter)
             );
+        }
+
+        const dateRange = document.getElementById('dateRangeFilter').value;
+        if (dateRange) {
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+            let fromDate = null;
+            let toDate = today;
+
+            if (dateRange === 'custom') {
+                const fromVal = document.getElementById('dateFrom').value;
+                const toVal = document.getElementById('dateTo').value;
+                if (fromVal) fromDate = new Date(fromVal);
+                if (toVal) {
+                    toDate = new Date(toVal);
+                    toDate.setHours(23, 59, 59, 999);
+                }
+            } else if (dateRange === 'last_month') {
+                fromDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                toDate = new Date(today.getFullYear(), today.getMonth(), 0, 23, 59, 59, 999);
+            } else if (dateRange === '30') {
+                fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            } else {
+                fromDate = new Date(today);
+                fromDate.setDate(today.getDate() - parseInt(dateRange));
+            }
+
+            filteredTransactions = filteredTransactions.filter(t => {
+                const txDate = new Date(t.date);
+                if (fromDate && txDate < fromDate) return false;
+                if (toDate && txDate > toDate) return false;
+                return true;
+            });
         }
 
         // Sort by date (newest first)
