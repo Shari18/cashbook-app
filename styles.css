@@ -101,17 +101,42 @@ body {
 /* Filters */
 .filters {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-bottom: 1rem;
 }
 
-.filters select {
+.filters select,
+.filters input[type="text"] {
     flex: 1;
     padding: 0.75rem;
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
     font-size: 0.875rem;
     background: white;
+}
+
+.filter-summary {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.75rem;
+    background: #f1f5f9;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.filter-income {
+    color: #059669;
+}
+
+.filter-expense {
+    color: #dc2626;
+}
+
+.filter-net {
+    color: #2563eb;
 }
 
 /* Form Styles */
@@ -375,7 +400,7 @@ body {
     }
 
     .filters {
-        max-width: 400px;
+        max-width: 600px;
     }
 
     .transaction-form {
@@ -419,10 +444,15 @@ body {
 
     .form-group input,
     .form-group select,
-    .filters select {
+    .filters select,
+    .filters input[type="text"] {
         background: #334155;
         border-color: #475569;
         color: #e2e8f0;
+    }
+
+    .filter-summary {
+        background: #334155;
     }
 
     .btn-secondary {
