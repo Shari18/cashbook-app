@@ -6,7 +6,7 @@ class CashBook {
         this.transactions = this.loadTransactions();
         this.categories = {
             income: ['Salary', 'Freelance', 'Business', 'Investment', 'Gift', 'Other Income'],
-            expense: ['Food', 'Travel', 'Bills', 'Shopping', 'Entertainment', 'Healthcare', 'Education', 'Rent', 'Investment', 'EMI', 'Grocery', 'Household', 'Personal', 'Other Expense']
+            expense: ['Food', 'Fuel', 'Travel', 'Bills', 'Shopping', 'Entertainment', 'Healthcare', 'Education', 'Rent', 'Investment', 'EMI', 'Grocery', 'Household', 'Personal', 'Other Expense']
         };
         this.init();
     }
@@ -44,6 +44,14 @@ class CashBook {
         });
 
         document.getElementById('typeFilter').addEventListener('change', () => {
+            this.renderTransactions();
+        });
+
+        document.getElementById('paymentModeFilter').addEventListener('change', () => {
+            this.renderTransactions();
+        });
+
+        document.getElementById('descriptionFilter').addEventListener('input', () => {
             this.renderTransactions();
         });
 
@@ -245,9 +253,10 @@ class CashBook {
         const container = document.getElementById('transactionsList');
         const categoryFilter = document.getElementById('categoryFilter').value;
         const typeFilter = document.getElementById('typeFilter').value;
+        const paymentModeFilter = document.getElementById('paymentModeFilter').value;
+        const descriptionFilter = document.getElementById('descriptionFilter').value.toLowerCase().trim();
 
         let filteredTransactions = this.transactions;
-
 
         // Apply filters
         if (categoryFilter) {
@@ -256,9 +265,31 @@ class CashBook {
         if (typeFilter) {
             filteredTransactions = filteredTransactions.filter(t => t.type === typeFilter);
         }
+        if (paymentModeFilter) {
+            filteredTransactions = filteredTransactions.filter(t => t.paymentMode === paymentModeFilter);
+        }
+        if (descriptionFilter) {
+            filteredTransactions = filteredTransactions.filter(t =>
+                t.description && t.description.toLowerCase().includes(descriptionFilter)
+            );
+        }
 
         // Sort by date (newest first)
         filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // Render filter summary
+        const summaryContainer = document.getElementById('filterSummary');
+        const filteredIncome = filteredTransactions
+            .filter(t => t.type === 'income')
+            .reduce((sum, t) => sum + t.amount, 0);
+        const filteredExpense = filteredTransactions
+            .filter(t => t.type === 'expense')
+            .reduce((sum, t) => sum + t.amount, 0);
+        summaryContainer.innerHTML = `
+            <span class="filter-income">Income: ${this.formatCurrency(filteredIncome)}</span>
+            <span class="filter-expense">Expense: ${this.formatCurrency(filteredExpense)}</span>
+            <span class="filter-net">Net: ${this.formatCurrency(filteredIncome - filteredExpense)}</span>
+        `;
 
         if (filteredTransactions.length === 0) {
             container.innerHTML = `
