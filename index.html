@@ -38,7 +38,17 @@
                     <option value="income">Income</option>
                     <option value="expense">Expense</option>
                 </select>
+                <select id="paymentModeFilter">
+                    <option value="">All Payment Modes</option>
+                    <option value="cash">Cash</option>
+                    <option value="upi">UPI</option>
+                    <option value="card">Card</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="cheque">Cheque</option>
+                </select>
+                <input type="text" id="descriptionFilter" placeholder="Search description...">
             </div>
+            <div class="filter-summary" id="filterSummary"></div>
             <div class="transactions-list" id="transactionsList">
                 <div class="empty-state">
                     <p>No transactions yet. Start by adding your first transaction!</p>
