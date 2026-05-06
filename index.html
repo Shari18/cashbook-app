@@ -47,6 +47,18 @@
                     <option value="cheque">Cheque</option>
                 </select>
                 <input type="text" id="descriptionFilter" placeholder="Search description...">
+                <select id="dateRangeFilter">
+                    <option value="">All Time</option>
+                    <option value="7">Last 7 days</option>
+                    <option value="30">This month</option>
+                    <option value="last_month">Last month</option>
+                    <option value="90">Last 3 months</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+            <div class="date-range-custom" id="dateRangeCustom">
+                <input type="date" id="dateFrom" placeholder="From">
+                <input type="date" id="dateTo" placeholder="To">
             </div>
             <div class="filter-summary" id="filterSummary"></div>
             <div class="transactions-list" id="transactionsList">
